@@ -115,6 +115,34 @@
                 </table>
                 <button id="admin-close-btn">Закрыть</button>
             </div>
+
+            <button id="toggle-form-btn" class="btn-primary" style="margin-bottom: 20px;">
+                + Написать новый пост
+            </button>
+
+            <div id="post-modal-overlay" class="modal-overlay">
+                <div class="post-modal-content">
+                    <div class="modal-header">
+                        <h3>Новая запись в блог</h3>
+                        <button id="close-modal-btn" class="close-x">&times;</button>
+                    </div>
+                    <form id="new-post-form">
+                        <div class="input-group">
+                            <label for="form-title">Заголовок</label>
+                            <input type="text" id="form-title" placeholder="Как назовем?" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="form-tags">Теги</label>
+                            <input type="text" id="form-tags" placeholder="js, life, web..." required>
+                        </div>
+                        <div class="input-group">
+                            <label for="form-content">Контент</label>
+                            <textarea id="form-content" rows="6" placeholder="О чем сегодня думаем?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-publish">Опубликовать</button>
+                    </form>
+                </div>
+            </div>
         </main>
 
         <footer>

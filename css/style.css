@@ -549,3 +549,122 @@ mark { background: yellow; padding: 0 2px; }
 #detail-formatted-result {
     margin-top: 10px;
 }
+
+#toggle-form-btn {
+    background-color: #007acc; 
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+#toggle-form-btn:hover {
+    background-color: #005a9e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 122, 204, 0.3);
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 1500;
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+}
+
+.post-modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    color: #333;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #007acc; 
+    font-size: 1.5em;
+}
+
+.close-x {
+    background: none;
+    border: none;
+    color: #747d8c;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-x:hover {
+    color: #e74c3c;
+}
+
+.input-group { margin-bottom: 20px; }
+.input-group label { 
+    display: block; 
+    margin-bottom: 8px; 
+    font-weight: 600; 
+    font-size: 0.9em;
+    color: #2f3542;
+}
+
+#new-post-form input, 
+#new-post-form textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #dfe4ea;
+    border-radius: 6px;
+    padding: 12px;
+    color: #2f3542;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+#new-post-form input:focus, 
+#new-post-form textarea:focus {
+    border-color: #007acc;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.1);
+}
+
+.btn-publish {
+    width: 100%;
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-publish:hover {
+    background: #219150;
+    transform: translateY(-1px);
+}

@@ -138,27 +138,71 @@ const postsData = [
 { date: "2026-2-26", views: "50", tags: "life, blog", content: "Мои мысли сегодня", title: "Пост 6" },
 { date: "2026-3-10", views: "50", tags: "life, blog", content: "Классный текст, ваще все круто", title: "Пост 7" }];
 
+const dynamicPosts = blogStorage.get('dynamic_posts') || [];
+const allPosts = [...postsData, ...dynamicPosts];
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof postsData !== 'undefined') {
-        // renderTagCloud(postsData);
-        postsData.forEach(post => CreatePosts(post));
+const modalOverlay = document.getElementById('post-modal-overlay');
+    const openBtn = document.getElementById('toggle-form-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const postForm = document.getElementById('new-post-form');
+
+    allPosts.forEach(post => CreatePosts(post));
+
+    const closeModal = () => {
+        modalOverlay.style.display = 'none';
+        if (postForm) postForm.reset();
+    };
+
+    if (openBtn) {
+        openBtn.onclick = () => {
+            modalOverlay.style.display = 'flex';
+        };
+    }
+
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
+    }
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) closeModal();
+    });
+
+    if (postForm) {
+        postForm.onsubmit = (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('form-title').value;
+            const tags = document.getElementById('form-tags').value;
+            const content = document.getElementById('form-content').value;
+
+            const newPostInstance = new Post(title, content, 99, tags);
+            const postObject = newPostInstance.createNewPost();
+
+            CreatePosts(postObject);
+
+            const currentDynamic = blogStorage.get('dynamic_posts') || [];
+            currentDynamic.push(postObject);
+            blogStorage.set('dynamic_posts', currentDynamic);
+
+            if (typeof masterAdmin !== 'undefined') {
+                masterAdmin.externalLog(`Опубликован пост через класс Post: ${title}`);
+            }
+
+            closeModal();
+            alert('Пост успешно опубликован!');
+        };
     }
 
     setTimeout(() => {
         if (typeof initPostDetails === 'function') {
-            initPostDetails(postsData);
-        } else {
-            console.error("Ошибка: initPostDetails не найдена. Проверьте подключение text_formatter.js");
+            initPostDetails(allPosts);
         }
     }, 200);
 
     initDemo();
 
     try {
-        if (typeof postsData !== 'undefined') {
-            postsData.forEach(post => CreatePosts(post));
-        }
         demoInheritance();
     } catch (e) {
         console.error("Ошибка в процессе выполнения демо:", e);
