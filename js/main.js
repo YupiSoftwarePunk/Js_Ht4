@@ -1,5 +1,6 @@
 import User from './core/User.js';
 import AdminUser from './core/AdminUser.js';
+import { Post } from './core/Post.js'
 
 import { TextFormatter, initPostDetails } from './text-formatter.js';
 import { highlightActiveLink, FilterPosts } from './navigation.js';
@@ -146,6 +147,11 @@ const modalOverlay = document.getElementById('post-modal-overlay');
     const openBtn = document.getElementById('toggle-form-btn');
     const closeBtn = document.getElementById('close-modal-btn');
     const postForm = document.getElementById('new-post-form');
+    const publishButton = document.getElementById('btn-publish');
+
+    // publishButton.addEventListener('click', () => {
+
+    // });
 
     allPosts.forEach(post => CreatePosts(post));
 
@@ -204,7 +210,8 @@ const modalOverlay = document.getElementById('post-modal-overlay');
 
     try {
         demoInheritance();
-    } catch (e) {
+    } 
+    catch (e) {
         console.error("Ошибка в процессе выполнения демо:", e);
     }
 });

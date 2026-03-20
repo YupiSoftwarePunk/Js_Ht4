@@ -1,4 +1,4 @@
-class Post {
+export class Post {
     title;
     content;
     authorId;
