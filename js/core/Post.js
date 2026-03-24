@@ -15,6 +15,7 @@ export class Post {
     createNewPost()
     {
         return {
+            id: Date.now() + Math.floor(Math.random() * 1000),
             title: this.title,
             content: this.content,
             authorId: this.authorId,

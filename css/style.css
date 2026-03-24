@@ -668,3 +668,29 @@ mark { background: yellow; padding: 0 2px; }
     background: #219150;
     transform: translateY(-1px);
 }
+
+.post-like-container {
+    display: flex;
+    padding: 10px 0;
+    cursor: pointer;
+    user-select: none;
+    width: fit-content;
+}
+
+.heart-icon {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s ease, fill 0.3s ease;
+    fill: transparent;
+    stroke: black;     
+    stroke-width: 2px;
+}
+
+.post-like-container:hover .heart-icon {
+    transform: scale(1.1);
+}
+
+.post-like-container.is-liked .heart-icon {
+    fill: #ff4d4d;   
+    stroke: #ff4d4d; 
+}

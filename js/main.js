@@ -1,6 +1,7 @@
 import User from './core/User.js';
 import AdminUser from './core/AdminUser.js';
 import { Post } from './core/Post.js'
+import { createLike } from './PostLikeModule.js';
 
 import { TextFormatter, initPostDetails } from './text-formatter.js';
 import { highlightActiveLink, FilterPosts } from './navigation.js';
@@ -47,6 +48,9 @@ function CreatePosts(data)
         return;
     }
 
+    const likedPosts = blogStorage.get('liked_posts', []);
+    const isLiked = likedPosts.includes(data.id);
+
     let newItem = document.createElement('li');
     newItem.setAttribute('data-date', data.date);
     newItem.setAttribute('data-views', data.views);
@@ -76,24 +80,45 @@ function CreatePosts(data)
     
     let spanDetails = document.createElement('span');
     spanDetails.classList.add('stats-details');
-    // spanDetails.textContent = `Теги: ${data.tags}`;
     spanDetails.textContent = `Теги: `;
     data.tags.split(',').forEach(tag => {
-    let tagBtn = document.createElement('button'); 
-    tagBtn.classList.add('tag');                  
-    tagBtn.textContent = tag.trim();              
-    spanDetails.append(tagBtn);
-});
+        let tagBtn = document.createElement('button'); 
+        tagBtn.classList.add('tag');                  
+        tagBtn.textContent = tag.trim();              
+        spanDetails.append(tagBtn);
+    });
 
-    div.append(spanDate, " | ", spanReadTime, " | ", spanDetails);
+    const likeBtn = createLike(data, isLiked);
+    likeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        const currentLiked = blogStorage.get('liked_posts', []);
+        const hasLike = likeBtn.classList.toggle('is-liked');
+
+        if (hasLike) {
+            if (!currentLiked.includes(data.id)) {
+                currentLiked.push(data.id);
+            }
+        } 
+        else {
+            const index = currentLiked.indexOf(data.id);
+            if (index > -1) currentLiked.splice(index, 1);
+        }
+
+        blogStorage.set('liked_posts', currentLiked);
+        
+        if (typeof masterAdmin !== 'undefined') {
+            masterAdmin.externalLog(`${hasLike ? 'Лайк' : 'Дизлайк'} посту №${data.id}`);
+        }
+    });
+
+    div.append(spanDate, " | ", spanReadTime, " | ", spanDetails, likeBtn);
 
     let contentPreviewDiv = document.createElement('div');
     contentPreviewDiv.classList.add('post-content-preview');
     contentPreviewDiv.style.marginTop = '10px';
 
     if (typeof TextFormatter !== 'undefined') {
-        // const shortText = TextFormatter.truncate(100, '...')(data.content);
-        // contentPreviewDiv.innerHTML = TextFormatter.applyFullFormatting(shortText);
         const formattedContent = TextFormatter.applyFullFormatting(data.content);
         contentPreviewDiv.innerHTML = formattedContent;
     }
@@ -131,13 +156,13 @@ window.onload = function ()
 
 
 const postsData = [
-{ date: "2023-10-01", views: "150", tags: "js, frontend", content: "```javascript\n" + `for (var i = 0; i < links.length; i++) \nconsole.log(link[i])` + "\n```", title: "Пост 1" },
-{ date: "2024-01-15", views: "500", tags: "html, css", content: "{}gsdfhjsa<>", title: "Пост 2" },
-{ date: "2023-12-20", views: "50", tags: "life, blog", content: "Мои мысли сегодня", title: "Пост 3" },
-{ date: "2024-02-01", views: "300", tags: "js, react", content: "Текст про реакт", title: "Пост 4" },
-{ date: "2023-05-10", views: "1000", tags: "news", content: "Важное объявление", title: "Пост 5" },
-{ date: "2026-2-26", views: "50", tags: "life, blog", content: "Мои мысли сегодня", title: "Пост 6" },
-{ date: "2026-3-10", views: "50", tags: "life, blog", content: "Классный текст, ваще все круто", title: "Пост 7" }];
+{ id: 1, date: "2023-10-01", views: "150", tags: "js, frontend", content: "```javascript\n" + `for (var i = 0; i < links.length; i++) \nconsole.log(link[i])` + "\n```", title: "Пост 1" },
+{ id: 2, date: "2024-01-15", views: "500", tags: "html, css", content: "{}gsdfhjsa<>", title: "Пост 2" },
+{ id: 3, date: "2023-12-20", views: "50", tags: "life, blog", content: "Мои мысли сегодня", title: "Пост 3" },
+{ id: 4, date: "2024-02-01", views: "300", tags: "js, react", content: "Текст про реакт", title: "Пост 4" },
+{ id: 5, date: "2023-05-10", views: "1000", tags: "news", content: "Важное объявление", title: "Пост 5" },
+{ id: 6, date: "2026-2-26", views: "50", tags: "life, blog", content: "Мои мысли сегодня", title: "Пост 6" },
+{ id: 7, date: "2026-3-10", views: "50", tags: "life, blog", content: "Классный текст, ваще все круто", title: "Пост 7" }];
 
 const dynamicPosts = blogStorage.get('dynamic_posts') || [];
 const allPosts = [...postsData, ...dynamicPosts];

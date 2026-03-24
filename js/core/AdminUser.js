@@ -2,7 +2,7 @@ import User from './User.js';
 
 export default class AdminUser extends User {
     #permissions = new Set();
-    static MAX_PERMISSIONS = 5;
+    static MAX_PERMISSIONS = 50;
     #storage;
     #logs = [];
 

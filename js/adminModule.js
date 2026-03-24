@@ -6,11 +6,17 @@ const blogStorage = new SaveData('Blog_');
 export const masterAdmin = new AdminUser(99, "Денис", blogStorage);
 masterAdmin.grantPermission('manage_users');
 
-let users = [
+let initialUsers = [
     { id: 1, name: "Иван Иванов", role: "user", permissions: [] },
     { id: 2, name: "Мария Смирнова", role: "user", permissions: ["editor"] },
     { id: 3, name: "Петр Техник", role: "user", permissions: [] }
 ];
+
+let users = blogStorage.get('user-list') || initialUsers;
+
+function saveUsers() {
+    blogStorage.set('users_list', users);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const adminBtn = document.getElementById('admin-login-btn');
@@ -18,15 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminOverlay = document.getElementById('admin-overlay');
     const closeBtn = document.getElementById('admin-close-btn');
 
+    function openAdminPanel() {
+        adminModal.style.display = 'block';
+        adminOverlay.style.display = 'block';
+        renderUserList();
+        syncLogsWithUI();
+    }
+
     adminBtn.addEventListener('click', () => {
-        const password = prompt("Введите пароль администратора:");
-        if (password === "admin123") { 
-            adminModal.style.display = 'block';
-            adminOverlay.style.display = 'block';
-            renderUserList();
-            addLog("Вход в систему выполнен");
+        const isAuth = blogStorage.get('is_authenticated', false);
+
+        if (isAuth === true) {
+            openAdminPanel();
+            addLog("Автоматический вход (сессия сохранена)");
         } else {
-            alert("Доступ запрещен!");
+            const password = prompt("Введите пароль администратора:");
+            
+            if (password === "admin123") {
+                blogStorage.set('is_authenticated', true);
+                
+                openAdminPanel();
+                addLog("Первичный вход выполнен успешно");
+            } else {
+                alert("Доступ запрещен!");
+            }
         }
     });
 
@@ -54,15 +75,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function syncLogsWithUI() {
+        const logContainer = document.getElementById('admin-log');
+        logContainer.innerHTML = ''; 
+        
+        const history = masterAdmin.getLogs();
+        history.forEach(entry => {
+            const div = document.createElement('div');
+            div.textContent = `[${entry.timestamp}] ${entry.action}`;
+            logContainer.prepend(div); 
+        });
+    }
+
     window.handleGrant = (userId) => {
         const perm = prompt("Введите название права (например, editor, moderator):");
         if (perm && masterAdmin.grantPermission(perm)) {
             const user = users.find(u => u.id === userId);
             if (user && !user.permissions.includes(perm)) {
                 user.permissions.push(perm);
+                saveUsers();
                 addLog(`Выдано право "${perm}" пользователю ID:${userId}`);
                 renderUserList();
             }
+        }
+        else {
+            console.log("Не удалось выдать право (возможно достигнут лимит в классе AdminUser)");
         }
     };
 
@@ -71,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reason) {
             masterAdmin.banUser(userId, reason);
             users = users.filter(u => u.id !== userId); 
+            saveUsers();
             addLog(`Заблокирован пользователь ID:${userId}. Причина: ${reason}`);
             renderUserList();
         }
