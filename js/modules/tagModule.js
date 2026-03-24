@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+export function initTags() {
     const postList = document.getElementById('post-list');
     const posts = Array.from(postList.querySelectorAll('li'));
     const tagsContainer = document.getElementById('tags-container');
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBtn.onclick = () => posts.forEach(p => p.style.display = 'block');
     tagsContainer.prepend(resetBtn);
 
+
     function filterByTag(selectedTag) {
         posts.forEach(post => {
             const postTags = post.dataset.tags.split(',').map(tag => tag.trim());
@@ -35,4 +36,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+}

@@ -1,13 +1,14 @@
 import User from './core/User.js';
 import AdminUser from './core/AdminUser.js';
 import { Post } from './core/Post.js'
-import { createLike } from './PostLikeModule.js';
-import { demoInheritance, demoButton, initDemo } from './inheritanceModule.js';
+import { createLike } from './modules/PostLikeModule.js';
+import { demoInheritance, demoButton, initDemo } from './modules/inheritanceModule.js';
 import { TextFormatter } from './text-formatter.js';
 import { highlightActiveLink, FilterPosts } from './navigation.js';
-import { masterAdmin } from './adminModule.js';
+import { masterAdmin } from './modules/adminModule.js';
 import { SaveData } from './SaveData.js';
-import { initPostDetails, CreatePosts } from './postModule.js';
+import { initPostDetails, CreatePosts } from './modules/postModule.js';
+import { initTags } from './modules/tagModule.js';
 
 const blogStorage = new SaveData('Blog_');
 
@@ -91,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentInput = document.getElementById('form-content');
 
     allPosts.forEach(post => CreatePosts(post, blogStorage));
+
+    initTags();
 
     const closeModal = () => {
         modalOverlay.style.display = 'none';

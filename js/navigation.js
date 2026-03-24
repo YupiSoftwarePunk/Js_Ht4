@@ -73,8 +73,6 @@ export function FilterPosts() {
                 if (post.dateNode) post.dateNode.textContent = getFriendlyDate(post.element.dataset.date);
                 if (post.timeNode) post.timeNode.textContent = `⏱ ${post.stats.readTime} мин.`;
                 if (post.detailsNode) {
-                    // post.detailsNode.textContent = `(Слов: ${post.stats.words}, LIX: ${post.stats.readability})`;
-
                     post.detailsNode.innerHTML = ''; 
     
                     post.detailsNode.append(`(Слов: ${post.stats.words}, LIX: ${post.stats.readability}) `);
@@ -130,7 +128,6 @@ export function FilterPosts() {
             link.click();
         });
     }
-
     update();
 
     if (typeof initFormatting === 'function') {
@@ -154,7 +151,6 @@ export function getFriendlyDate(dateStr) {
         return "Вчера";
     } 
     else {
-
         return new Intl.DateTimeFormat('ru-RU', {
             day: 'numeric',
             month: 'long',
@@ -230,7 +226,6 @@ export function updateBlogStats(visiblePosts, container) {
     }, 0);
 
     const totalWords = visiblePosts.reduce((acc, p) => acc + p.stats.words, 0);
-    // const avgReadTime = visiblePosts.length ? (totalWords / (visiblePosts.length * 200)).toFixed(1) : 0;
         const avgReadTime = totalReadTime.toFixed(1);
 
     const tagsMap = {};

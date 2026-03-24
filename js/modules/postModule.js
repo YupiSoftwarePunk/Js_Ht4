@@ -1,5 +1,5 @@
 import { createLike } from './PostLikeModule.js';
-import { TextFormatter } from './text-formatter.js';
+import { TextFormatter } from '../text-formatter.js';
 
 export function initPostDetails(postsData) {
     const modal = document.getElementById('post-detail-modal');

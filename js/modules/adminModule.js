@@ -1,5 +1,5 @@
-import AdminUser from './core/AdminUser.js';
-import { SaveData } from './SaveData.js';
+import AdminUser from '../core/AdminUser.js';
+import { SaveData } from '../SaveData.js';
 
 const blogStorage = new SaveData('Blog_');
 
