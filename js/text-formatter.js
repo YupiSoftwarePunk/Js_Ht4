@@ -197,13 +197,10 @@ export function initFormatting(posts) {
             if (post.element.style.display === 'none') return;
 
             const originalText = post.content;
-            // ВАЖНО: Вызываем форматирование только один раз!
             const formattedHtml = TextFormatter.applyFullFormatting(originalText);
 
-            // Если текст изменился (появились теги или подсветка), считаем это изменением
             if (originalText !== formattedHtml) {
                 hasChanges = true;
-                
                 const postBox = document.createElement('div');
                 postBox.className = 'modal-comparison-item';
                 postBox.style.cssText = 'border-bottom: 1px solid #ddd; padding-bottom: 15px; margin-bottom: 15px;';
@@ -214,11 +211,9 @@ export function initFormatting(posts) {
                 const grid = document.createElement('div');
                 grid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 20px;';
 
-                // Левая часть: "До"
                 const before = document.createElement('div');
                 before.innerHTML = `<b>До:</b> <pre style="white-space: pre-wrap;">${originalText}</pre>`;
 
-                // Правая часть: "После"
                 const after = document.createElement('div');
                 const afterTextContainer = document.createElement('div');
                 afterTextContainer.innerHTML = `<b>После:</b> ${formattedHtml}`;
@@ -248,70 +243,4 @@ export function debounce(func, delay = 300) {
             func.apply(null, args);
         }, delay);
     };
-}
-
-
-export function initPostDetails(postsData) {
-    const modal = document.getElementById('post-detail-modal');
-    const overlay = document.getElementById('post-detail-overlay');
-    const contentEdit = document.getElementById('detail-content-edit');
-    const previewContainer = document.getElementById('detail-preview-container');
-    const previewResult = document.getElementById('detail-formatted-result');
-
-    let currentPostIndex = null;
-    const postElements = document.querySelectorAll('#post-list li');
-    
-    postElements.forEach((el, index) => {
-        el.addEventListener('click', () => {
-            const post = postsData[index];
-            currentPostIndex = index;
-            document.getElementById('detail-title').textContent = post.title;
-            contentEdit.value = post.content;
-            const stats = TextFormatter.getStats(post.content);
-            document.getElementById('stat-date').textContent = post.date;
-            document.getElementById('stat-views').textContent = post.views;
-            document.getElementById('stat-chars').textContent = stats.chars;
-            document.getElementById('stat-words').textContent = stats.words;
-            document.getElementById('stat-readability').textContent = stats.complexity;
-
-            previewContainer.style.display = 'none';
-            modal.style.display = 'block';
-            overlay.style.display = 'block';
-        });
-    });
-
-    document.getElementById('detail-format-btn').onclick = () => {
-        const text = contentEdit.value;
-        previewResult.innerHTML = TextFormatter.applyFullFormatting(text);
-        previewContainer.style.display = 'block';
-    };
-
-    document.getElementById('detail-save-btn').onclick = () => {
-        if (currentPostIndex !== null) {
-            const newText = contentEdit.value;
-
-            postsData[currentPostIndex].content = newText;
-
-            const li = postElements[currentPostIndex];
-            li.setAttribute('data-content', newText); 
-
-            const previewDiv = li.querySelector('.post-content-preview');
-            if (previewDiv) {
-                previewDiv.innerHTML = TextFormatter.applyFullFormatting(newText);
-            }
-
-            modal.style.display = 'none';
-            overlay.style.display = 'none';
-
-            console.log('Пост успешно обновлен в памяти');
-        }
-    };
-
-    const close = () => {
-        modal.style.display = 'none';
-        overlay.style.display = 'none';
-    };
-    
-    document.getElementById('detail-close-btn').addEventListener('click', close);
-    overlay.addEventListener('click', close);
 }

@@ -2,11 +2,12 @@ import User from './core/User.js';
 import AdminUser from './core/AdminUser.js';
 import { Post } from './core/Post.js'
 import { createLike } from './PostLikeModule.js';
-
-import { TextFormatter, initPostDetails } from './text-formatter.js';
+import { demoInheritance, demoButton, initDemo } from './inheritanceModule.js';
+import { TextFormatter } from './text-formatter.js';
 import { highlightActiveLink, FilterPosts } from './navigation.js';
 import { masterAdmin } from './adminModule.js';
 import { SaveData } from './SaveData.js';
+import { initPostDetails, CreatePosts } from './postModule.js';
 
 const blogStorage = new SaveData('Blog_');
 
@@ -37,103 +38,6 @@ for (var i = 0; i < links.length; i++)
             window.location.href = clickedLink.href; 
         }, 1000);
     });
-}
-
-function CreatePosts(data)
-{
-    let posts = document.querySelector('#post-list');
-
-    if (!posts)
-    {
-        return;
-    }
-
-    const likedPosts = blogStorage.get('liked_posts', []);
-    const isLiked = likedPosts.includes(data.id);
-
-    let newItem = document.createElement('li');
-    newItem.setAttribute('data-date', data.date);
-    newItem.setAttribute('data-views', data.views);
-    newItem.setAttribute('data-tags', data.tags);
-    newItem.setAttribute('data-content', data.content);
-    newItem.setAttribute('tabindex', '0');
-    newItem.classList.add('focusable-post');
-    newItem.style.cursor = 'pointer';
-
-    newItem.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && document.activeElement === newItem) {
-            if (typeof initPostDetails === 'function') {
-                newItem.click(); 
-            }
-        }
-    });
-
-    let span = document.createElement('span');
-    span.classList.add('post-title');
-    span.textContent = data.title;
-
-    let div = document.createElement('div');
-    div.classList.add('post-stats-node');
-    div.style.fontSize = '0.8em';
-    div.style.color = 'gray';
-
-    let spanDate = document.createElement('span');
-    spanDate.classList.add('stats-date');
-    spanDate.textContent = data.date;
-    
-    let spanReadTime = document.createElement('span');
-    spanReadTime.classList.add('stats-read-time');
-
-    const wordCount = data.content.split(/\s+/).length;
-    spanReadTime.textContent = `Время чтения: ${Math.ceil(wordCount / 200)} мин.`;
-    
-    let spanDetails = document.createElement('span');
-    spanDetails.classList.add('stats-details');
-    spanDetails.textContent = `Теги: `;
-    data.tags.split(',').forEach(tag => {
-        let tagBtn = document.createElement('button'); 
-        tagBtn.classList.add('tag');                  
-        tagBtn.textContent = tag.trim();              
-        spanDetails.append(tagBtn);
-    });
-
-    const likeBtn = createLike(data, isLiked);
-    likeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        const currentLiked = blogStorage.get('liked_posts', []);
-        const hasLike = likeBtn.classList.toggle('is-liked');
-
-        if (hasLike) {
-            if (!currentLiked.includes(data.id)) {
-                currentLiked.push(data.id);
-            }
-        } 
-        else {
-            const index = currentLiked.indexOf(data.id);
-            if (index > -1) currentLiked.splice(index, 1);
-        }
-
-        blogStorage.set('liked_posts', currentLiked);
-        
-        if (typeof masterAdmin !== 'undefined') {
-            masterAdmin.externalLog(`${hasLike ? 'Лайк' : 'Дизлайк'} посту №${data.id}`);
-        }
-    });
-
-    div.append(spanDate, " | ", spanReadTime, " | ", spanDetails, likeBtn);
-
-    let contentPreviewDiv = document.createElement('div');
-    contentPreviewDiv.classList.add('post-content-preview');
-    contentPreviewDiv.style.marginTop = '10px';
-
-    if (typeof TextFormatter !== 'undefined') {
-        const formattedContent = TextFormatter.applyFullFormatting(data.content);
-        contentPreviewDiv.innerHTML = formattedContent;
-    }
-
-    newItem.append(span, div, contentPreviewDiv);
-    posts.appendChild(newItem);
 }
 
 window.onload = function () 
@@ -186,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagsInput = document.getElementById('form-tags');
     const contentInput = document.getElementById('form-content');
 
-    allPosts.forEach(post => CreatePosts(post));
+    allPosts.forEach(post => CreatePosts(post, blogStorage));
 
     const closeModal = () => {
         modalOverlay.style.display = 'none';
@@ -259,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newPostInstance = new Post(title, content, 99, tags);
             const postObject = newPostInstance.createNewPost();
 
-            CreatePosts(postObject);
+            CreatePosts(postObject, blogStorage);
 
             const currentDynamic = blogStorage.get('dynamic_posts') || [];
             currentDynamic.push(postObject);
@@ -290,100 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-function demoInheritance() {
-    if (typeof User === 'undefined' || typeof AdminUser === 'undefined') {
-        console.error("КРИТИЧЕСКАЯ ОШИБКА: Классы User или AdminUser не найдены!");
-        return;
-    }
-
-    console.log("Кнопка нажата, запускаю демо...");
-    let user = new User(1, 'Michael');
-    const admin = window.masterAdmin;
-
-    if (!admin) {
-        console.error("Админ не инициализирован!");
-        return;
-    }
-
-    console.log(user.getInfo());
-    console.log(admin.getInfo());
-
-    admin.grantPermission('manage_users');
-    console.log(admin.getPermissions());
-
-    console.log("Список прав:", admin.getPermissions());
-
-    if (admin.canManageUsers()) {
-        admin.banUser(user.id, "Нарушение правил сообщества");
-    }
-    for(let i = 0; i < 6; i++) admin.grantPermission(`rule_${i}`);
-
-    console.table(admin.getLogs());
-}
-
-function demoButton() {
-    const oldBtn = document.getElementById('demoBtn');
-    if (oldBtn) oldBtn.remove();
-
-    const btn = document.createElement('button');
-    btn.id = 'demoBtn';
-    btn.innerHTML = 'Запустить Демо ООП';
-
-    Object.assign(btn.style, {
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: '10000', 
-        padding: '15px 25px',
-        backgroundColor: '#ff4757',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
-        display: 'block'
-    });
-
-    btn.onclick = demoInheritance;
-
-    document.body.appendChild(btn);
-    console.log("Кнопка создана программно и добавлена в body");
-}
-
     demoButton();
     demoInheritance();
-
-
-    function initDemo() {
-    console.log("Попытка создания кнопки...");
-    const btnId = 'demoBtn';
-    if (document.getElementById(btnId)) return;
-
-    const btn = document.createElement('button');
-    btn.id = btnId;
-    btn.textContent = 'ЗАПУСТИТЬ ДЕМО ООП';
-
-    btn.setAttribute('style', `
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        z-index: 99999 !important;
-        padding: 20px !important;
-        background: red !important;
-        color: white !important;
-        display: block !important;
-        cursor: pointer !important;
-    `);
-
-    btn.onclick = () => {
-        console.log("Кнопка нажата!");
-        demoInheritance();
-    };
-
-    document.body.appendChild(btn);
-}
 
 const admin = new AdminUser(1, 'Denis', blogStorage);
 
