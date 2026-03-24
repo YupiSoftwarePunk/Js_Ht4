@@ -56,8 +56,17 @@ function CreatePosts(data)
     newItem.setAttribute('data-views', data.views);
     newItem.setAttribute('data-tags', data.tags);
     newItem.setAttribute('data-content', data.content);
-
+    newItem.setAttribute('tabindex', '0');
+    newItem.classList.add('focusable-post');
     newItem.style.cursor = 'pointer';
+
+    newItem.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.activeElement === newItem) {
+            if (typeof initPostDetails === 'function') {
+                newItem.click(); 
+            }
+        }
+    });
 
     let span = document.createElement('span');
     span.classList.add('post-title');
@@ -168,15 +177,14 @@ const dynamicPosts = blogStorage.get('dynamic_posts') || [];
 const allPosts = [...postsData, ...dynamicPosts];
 
 document.addEventListener('DOMContentLoaded', () => {
-const modalOverlay = document.getElementById('post-modal-overlay');
+    const modalOverlay = document.getElementById('post-modal-overlay');
     const openBtn = document.getElementById('toggle-form-btn');
     const closeBtn = document.getElementById('close-modal-btn');
     const postForm = document.getElementById('new-post-form');
-    const publishButton = document.getElementById('btn-publish');
 
-    // publishButton.addEventListener('click', () => {
-
-    // });
+    const titleInput = document.getElementById('form-title');
+    const tagsInput = document.getElementById('form-tags');
+    const contentInput = document.getElementById('form-content');
 
     allPosts.forEach(post => CreatePosts(post));
 
@@ -188,8 +196,40 @@ const modalOverlay = document.getElementById('post-modal-overlay');
     if (openBtn) {
         openBtn.onclick = () => {
             modalOverlay.style.display = 'flex';
+            titleInput.focus();
         };
     }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+        if (modalOverlay && modalOverlay.style.display === 'flex') {
+            closeModal();
+        }
+        const adminModal = document.getElementById('admin-modal');
+        if (adminModal && (adminModal.style.display === 'block' || adminModal.style.display === 'flex')) {
+            const adminCloseBtn = document.getElementById('admin-close-btn');
+            if (adminCloseBtn) adminCloseBtn.click();
+        }
+        return;
+    }
+
+    if (e.ctrlKey && (e.key === '/' || e.code === 'Slash')) {
+        e.preventDefault(); 
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.focus();
+        }
+        return;
+    }
+
+    if (e.ctrlKey && (e.key.toLowerCase() === 'n' || e.key.toLowerCase() === 'т')) {
+        e.preventDefault();
+        if (openBtn && modalOverlay.style.display !== 'flex') {
+            openBtn.click(); 
+        }
+        return;
+    }
+    }, true);
 
     if (closeBtn) {
         closeBtn.onclick = closeModal;
@@ -198,6 +238,15 @@ const modalOverlay = document.getElementById('post-modal-overlay');
     window.addEventListener('click', (event) => {
         if (event.target === modalOverlay) closeModal();
     });
+
+    if (contentInput) {
+        contentInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault(); 
+                postForm.requestSubmit();
+            }
+        });
+    }
 
     if (postForm) {
         postForm.onsubmit = (e) => {

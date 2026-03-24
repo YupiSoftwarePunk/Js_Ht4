@@ -694,3 +694,33 @@ mark { background: yellow; padding: 0 2px; }
     fill: #ff4d4d;   
     stroke: #ff4d4d; 
 }
+
+input:focus-visible, 
+textarea:focus-visible, 
+button:focus-visible,
+.post-like-container:focus-visible {
+    outline: 3px solid #007bff; 
+    outline-offset: 2px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.post-like-container:focus {
+    outline: none; 
+}
+
+input, textarea, button {
+    transition: outline 0.2s ease, box-shadow 0.2s ease;
+}
+
+.focusable-post:focus-visible {
+    outline: 3px solid #007bff !important;
+    outline-offset: -2px; 
+    background-color: rgba(0, 123, 255, 0.05); 
+    border-radius: 8px;
+}
+
+:focus-visible {
+    outline: 3px solid #007bff !important;
+    outline-offset: 2px;
+}
