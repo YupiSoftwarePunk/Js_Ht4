@@ -1,4 +1,5 @@
 import { analyzeText, getFriendlyDate } from './navigation.js';
+import { TextFormatter } from './text-formatter.js';
 
 window.analyzeText = analyzeText;
 
