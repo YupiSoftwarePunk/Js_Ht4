@@ -15,27 +15,43 @@
     </head>
 
     <body>
-        <header>
+        <header role="banner">
             <h1>Сайт мистера Денискиса</h1>
-            <a href="/" class="logo-link">
+            <a href="/" class="logo-link" aria-label="На главную">
                 <img src="img/cover.jpg" alt="Логотип сайта" class="logo-image" height="100" width="100">
             </a>
-            <nav class="main-nav" >
+            <nav class="main-nav" aria-label="Основная навигация">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="index.html" class="nav-link">Главная</a></li>
                     <li class="nav-item"><a href="about.html" class="nav-link"> О нас</a></li>
                     <li class="nav-item"><a href="contact.html" class="nav-link">Контакты</a></li>
                 </ul>
             </nav>
-            <button id="admin-login-btn">Войти как админ</button>
+            <!-- <button id="admin-login-btn" role="button">Войти как админ</button> -->
+            <a href="#admin-modal" id="admin-login-btn" class="btn-secondary" role="button">Войти как админ</a>
+
+            <!-- <button id="open-shortcut">Управление горячими клавишами</button> -->
+            <a href="#shortcuts-modal" id="open-shortcut" class="btn-secondary" role="button">
+                Управление горячими клавишами
+            </a>
         </header>
 
         <main>
             <p>Добро пожаловать на наш сайт!</p>
             <p>Здесь вы найдете много интересной информации.</p><br>
 
-            <form method="post">
-                <input type="text" placeholder="Пост 1" id="search-input">
+            <!-- <form method="post" class="search-wrapper" aria-label="Поиск">
+                <label for="search-input" class="visually-hidden">Поиск по записям</label>
+                <input type="text" name="q" placeholder="Поиск постов..." id="search-input" 
+                    accesskey="s" aria-keyshortcuts="Control+Slash" title="Поиск (Alt + S или Ctrl + /)">
+                <span class="hotkey-hint"><kbd>Ctrl</kbd> + <kbd>/</kbd></span>
+            </form> -->
+            <form method="GET" action="/search" class="search-wrapper" role="search">
+                <label for="search-input" class="visually-hidden">Поиск по записям</label>
+                <input type="text" name="q" placeholder="Поиск постов..." id="search-input" 
+                accesskey="s" aria-keyshortcuts="Control+Slash" title="Поиск (Alt + S или Ctrl + /)">
+                <span class="hotkey-hint" aria-hidden="true"><kbd>Ctrl</kbd> + <kbd>/</kbd></span>
+                <button type="submit" class="visually-hidden">Найти</button>
             </form>
 
             <select id="sort-posts">
@@ -46,10 +62,16 @@
 
             <div id="tag-cloud">
                 <strong>Подборки по тегам:</strong>
-                <div id="tags-container"></div>
+                <div id="tags-container" role="group" aria-label="Облако тегов"></div>
             </div>
 
-            <ul id="post-list">
+            <br><span>Горячие клавиши для выделенных постов</span><br><br>
+            <span class="hotkey-hint" aria-hidden="true">Выделить пост - <kbd>Стрелка вверх</kbd> / <kbd>Стрелка вниз</kbd></span><br>
+            <span class="hotkey-hint" aria-hidden="true">Поставить лайк - <kbd>Space</kbd> / <kbd>Enter</kbd></span><br>
+            <span class="hotkey-hint" aria-hidden="true">Открыть окно редактирования и форматирования - <kbd>E</kbd></span><br>
+            <span class="hotkey-hint" aria-hidden="true">Удалить пост - <kbd>Delete</kbd></span><br>
+            <ul id="post-list" role="list" aria-label="Список постов">
+                
             </ul>
             <p id="no-results">По вашему запросу ничего не найдено</p><br>
 
@@ -60,12 +82,15 @@
                 <option value="60">Сложные</option>
             </select>
 
-            <button id="export-csv">Экспорт в CSV</button>
+            <!-- <button id="export-csv">Экспорт в CSV</button> -->
+            <a href="/api/export-csv" download="blog-stats.csv" id="export-csv" class="btn-link" role="button">Экспорт в CSV</a>
 
             <section id="blog-stats" >
                 <h3>Статистика блога</h3>
                 <div id="stats-content">Загрузка...</div>
-                <canvas id="publish-chart" width="400" height="100"></canvas> <button id="export-csv">Экспорт в CSV</button>
+                <canvas id="publish-chart" width="400" height="100"></canvas> 
+                <!-- <button id="export-csv">Экспорт в CSV</button> -->
+                <a href="/api/export-csv" download="blog-stats.csv" id="export-csv" class="btn-link" role="button">Экспорт в CSV</a>
             </section>
 
             <div id="post-detail-overlay"></div>
@@ -89,7 +114,8 @@
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
                         <button id="detail-format-btn">Форматировать (JS/Текст/Код)</button>
                         <button id="detail-save-btn">Сохранить изменения</button>
-                        <button id="detail-close-btn">Закрыть</button>
+                        <!-- <button id="detail-close-btn">Закрыть</button> -->
+                        <a href="#" id="detail-close-btn" class="btn-close" role="button">Закрыть</a>
                     </div>
                 </div>
 
@@ -114,15 +140,22 @@
                 <button id="admin-close-btn">Закрыть</button>
             </div><br>
 
-            <button id="toggle-form-btn" class="btn-primary" style="margin-bottom: 20px;">
-                + Написать новый пост
-            </button>
+            <!-- <button id="toggle-form-btn" class="btn-primary" accesskey="n" aria-keyshortcuts="Alt+N" style="margin-bottom: 20px;">
+                Создать пост <kbd>Alt</kbd>+<kbd>N</kbd>
+            </button> -->
+            <a href="#post-modal-overlay" id="toggle-form-btn" class="btn-primary" 
+            accesskey="n" aria-keyshortcuts="Alt+N" role="button" 
+            title="Создать новый пост (Alt N)">
+                Создать пост 
+            </a>
+            <span class="hotkey-hint2" aria-hidden="true"><kbd>Alt</kbd> + <kbd>N</kbd></span>
 
             <div id="post-modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
                 <div class="post-modal-content">
                     <div class="modal-header">
                         <h3>Новая запись в блог</h3>
-                        <button id="close-modal-btn" class="close-x">&times;</button>
+                        <!-- <button id="close-modal-btn" class="close-x">&times;</button> -->
+                        <a href="#" id="close-modal-btn" class="close-x" aria-label="Закрыть окно">&times;</a>
                     </div>
                     <form id="new-post-form">
                         <div class="input-group">
@@ -141,9 +174,29 @@
                     </form>
                 </div>
             </div>
+
+            <div id="shortcuts-modal" class="modal-overlay" role="dialog" aria-labelledby="shortcuts-title">
+                <div class="post-modal-content">
+                    <h3 id="shortcuts-title">Настройка горячих клавиш</h3>
+                    <table id="shortcuts-table">
+                        <thead>
+                            <tr>
+                                <th>Действие</th>
+                                <th>Клавиша</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shortcuts-list-body">
+                            </tbody>
+                    </table>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button id="save-shortcuts-btn" class="btn-publish">Сохранить</button>
+                        <a href="#" id="close-shortcuts-btn" class="btn-close" role="button">Закрыть</a>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <footer>
+        <footer role="contentinfo">
 
         </footer>
     </body>

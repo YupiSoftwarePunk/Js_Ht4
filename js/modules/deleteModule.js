@@ -1,6 +1,11 @@
 export function showConfirmDelete(postId, postElement, storage) {
     const confirmOverlay = document.createElement('div');
     confirmOverlay.className = 'delete-overlay';
+
+    confirmOverlay.setAttribute('role', 'alertdialog');
+    confirmOverlay.setAttribute('aria-modal', 'true');
+    confirmOverlay.setAttribute('aria-labelledby', 'delete-title');
+
     confirmOverlay.style = `
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.7); display: flex; justify-content: center;
@@ -21,6 +26,8 @@ export function showConfirmDelete(postId, postElement, storage) {
     confirmOverlay.appendChild(dialog);
     document.body.appendChild(confirmOverlay);
 
+    setTimeout(() => confirmOverlay.querySelector('#confirm-yes').focus(), 10);
+
     dialog.querySelector('#confirm-no').onclick = () => confirmOverlay.remove();
     
     dialog.querySelector('#confirm-yes').onclick = () => {
@@ -34,5 +41,6 @@ export function showConfirmDelete(postId, postElement, storage) {
 
         confirmOverlay.remove();
         console.log(`Пост ${postId} удален`);
+        postElement.focus();
     };
 }
