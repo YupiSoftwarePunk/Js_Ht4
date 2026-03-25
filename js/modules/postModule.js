@@ -87,6 +87,8 @@ export function CreatePosts(data, storage)
     newItem.setAttribute('tabindex', '0');
     newItem.classList.add('focusable-post');
     newItem.style.cursor = 'pointer';
+    newItem.id = data.id;
+
 
     newItem.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && document.activeElement === newItem) {
@@ -126,6 +128,7 @@ export function CreatePosts(data, storage)
     });
 
     const likeBtn = createLike(data, isLiked);
+    likeBtn.classList.add('like-trigger');
     likeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         
