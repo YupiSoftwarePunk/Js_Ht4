@@ -8,7 +8,7 @@ import { masterAdmin } from './modules/adminModule.js';
 import { SaveData } from './SaveData.js';
 import { initPostDetails, CreatePosts } from './modules/postModule.js';
 import { initTags } from './modules/tagModule.js';
-import { initKeyboardShortcuts } from './modules/KeyPressModule.js';
+import { initKeyboardShortcuts, shortcutEditor } from './modules/KeyPressModule.js';
 
 const blogStorage = new SaveData('Blog_');
 
@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initKeyboardShortcuts(blogStorage);
+    shortcutEditor(blogStorage);
 
     if (closeBtn) {
         closeBtn.onclick = closeModal;

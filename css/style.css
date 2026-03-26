@@ -869,3 +869,25 @@ kbd:hover {
 #close-shortcuts-btn:hover {
     background: #ddd;
 }
+
+.key-assign-btn {
+    background: none;
+    border: 1px dashed #aaa;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.key-assign-btn.waiting {
+    background: #fff5e6;
+    border-color: #ff9800;
+    color: #ff9800;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
